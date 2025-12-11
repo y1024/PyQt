@@ -7,19 +7,29 @@ Created on 2018年11月22日
 @site: https://pyqt.site , https://github.com/PyQt5
 @email: 892768447@qq.com
 @file: RlatticeEffect
-@description: 
+@description:
 """
+
 from random import random
 from time import time
 
 try:
-    from PyQt5.QtCore import QPropertyAnimation, QObject, QEasingCurve, Qt, QRectF, pyqtSignal, pyqtProperty
-    from PyQt5.QtGui import QColor, QPainterPath, QPainter
+    from PyQt5.QtCore import (
+        QEasingCurve,
+        QObject,
+        QPropertyAnimation,
+        QRectF,
+        Qt,
+        pyqtProperty,
+        pyqtSignal,
+    )
+    from PyQt5.QtGui import QColor, QPainter, QPainterPath
     from PyQt5.QtWidgets import QApplication, QWidget
 except ImportError:
-    from PySide2.QtCore import QPropertyAnimation, QObject, QEasingCurve, Qt, QRectF, Signal as pyqtSignal, \
-        Property as pyqtProperty
-    from PySide2.QtGui import QColor, QPainterPath, QPainter
+    from PySide2.QtCore import Property as pyqtProperty
+    from PySide2.QtCore import QEasingCurve, QObject, QPropertyAnimation, QRectF, Qt
+    from PySide2.QtCore import Signal as pyqtSignal
+    from PySide2.QtGui import QColor, QPainter, QPainterPath
     from PySide2.QtWidgets import QApplication, QWidget
 
 try:
@@ -27,13 +37,11 @@ try:
 
     getDistance = pointtool.getDistance
     findClose = pointtool.findClose
-except:
+except Exception:
     import math
-
 
     def getDistance(p1, p2):
         return math.pow(p1.x - p2.x, 2) + math.pow(p1.y - p2.y, 2)
-
 
     def findClose(points):
         plen = len(points)
@@ -59,13 +67,12 @@ except:
 
 
 class Target:
-
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
 
-class Point(QObject):
+class Point(QObject):  # type: ignore
     valueChanged = pyqtSignal(int)
 
     def __init__(self, x, ox, y, oy, *args, **kwargs):
@@ -87,12 +94,14 @@ class Point(QObject):
 
     def initAnimation(self):
         # 属性动画
-        if not hasattr(self, 'xanimation'):
+        if not hasattr(self, "xanimation"):
             self.xanimation = QPropertyAnimation(
-                self, b'x', self, easingCurve=QEasingCurve.InOutSine)
+                self, b"x", self, easingCurve=QEasingCurve.InOutSine
+            )
             self.xanimation.valueChanged.connect(self.valueChanged.emit)
             self.yanimation = QPropertyAnimation(
-                self, b'y', self, easingCurve=QEasingCurve.InOutSine)
+                self, b"y", self, easingCurve=QEasingCurve.InOutSine
+            )
             self.yanimation.valueChanged.connect(self.valueChanged.emit)
             self.yanimation.finished.connect(self.updateAnimation)
             self.updateAnimation()
@@ -100,7 +109,7 @@ class Point(QObject):
     def updateAnimation(self):
         self.xanimation.stop()
         self.yanimation.stop()
-        duration = (1 + random()) * 1000
+        duration = int((1 + random()) * 1000)
         self.xanimation.setDuration(duration)
         self.yanimation.setDuration(duration)
         self.xanimation.setStartValue(self.__x)
@@ -111,24 +120,23 @@ class Point(QObject):
         self.yanimation.start()
 
     @pyqtProperty(float)
-    def x(self):
+    def x(self):  # type: ignore
         return self._x
 
-    @x.setter
+    @x.setter  # type: ignore
     def x(self, x):
         self._x = x
 
     @pyqtProperty(float)
-    def y(self):
+    def y(self):  # type: ignore
         return self._y
 
-    @y.setter
+    @y.setter  # type: ignore
     def y(self, y):
         self._y = y
 
 
-class Window(QWidget):
-
+class Window(QWidget):  # type: ignore
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
         self.setMouseTracking(True)
@@ -211,19 +219,22 @@ class Window(QWidget):
             painter.save()
             painter.setPen(Qt.NoPen)
             painter.setBrush(p.circleColor)
-            painter.drawRoundedRect(QRectF(
-                p.x - p.radius, p.y - p.radius, 2 * p.radius, 2 * p.radius), p.radius, p.radius)
+            painter.drawRoundedRect(
+                QRectF(p.x - p.radius, p.y - p.radius, 2 * p.radius, 2 * p.radius),
+                p.radius,
+                p.radius,
+            )
             painter.restore()
 
             # 开启动画
             p.initAnimation()
 
 
-if __name__ == '__main__':
-    import sys
+if __name__ == "__main__":
     import cgitb
+    import sys
 
-    cgitb.enable(format='text')
+    cgitb.enable(format="text")
 
     app = QApplication(sys.argv)
     w = Window()
