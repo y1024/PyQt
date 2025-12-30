@@ -3,6 +3,7 @@
 - 目录
   - [下拉数据关联](#1下拉数据关联)
   - [文本居中显示](#2文本居中显示)
+  - [样式美化](#3样式美化)
 
 ## 1、下拉数据关联
 
@@ -24,3 +25,13 @@
 2. 新增得item数据使用`setTextAlignment`对齐
 
 ![CenterText](ScreenShot/CenterText.png)
+
+## 2、样式美化
+
+[运行 ComboBoxStyle.py](ComboBoxStyle.py)
+
+1. 使用`setView`使得`QComboBox`的下拉窗口支持样式
+2. 通过`setAttribute`和`setWindowFlags`设置下拉窗口的属性，支持透明和无边框
+3. 样式中通过`qlineargradient`设置 | 的渐变效果，让两端透明
+
+![ComboBoxStyle](ScreenShot/ComboBoxStyle.png)
